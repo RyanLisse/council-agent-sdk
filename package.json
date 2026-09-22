@@ -1,0 +1,27 @@
+{
+  "name": "council-agent-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Thin Claude Agent SDK starter \u2014 LLM council fan-out + judge reduce (AetherLink Arcade / AET-63)",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node --import tsx src/agent.ts",
+    "dev": "node --import tsx src/agent.ts",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "quest:judge": "node --import tsx src/quest-judge.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.278",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "license": "MIT"
+}
