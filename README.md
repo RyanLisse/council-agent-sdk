@@ -64,6 +64,16 @@ pnpm test
 | `src/schemas.ts` | Judge/agreement types |
 | `src/agent.ts` | Runner + optional live `query()` |
 
+## Interactive course
+
+`course/` holds a self-contained HTML course that walks through this repo in plain language: fan-out, the judge's scoring, the `instructions.md` quest hook, and fixture vs live SDK. Includes animations, code↔English translations and quizzes. No install needed:
+
+```bash
+open course/index.html
+```
+
+Rebuild after editing a module: `cd course && bash build.sh`.
+
 ## License
 
 MIT

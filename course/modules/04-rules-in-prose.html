@@ -1,0 +1,213 @@
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">Rules Written in Prose</h1>
+      <p class="module-subtitle">How a Markdown file steers the judge, and the mini-quest that asks you to edit it</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A note on the fridge for the house-sitter</h2>
+        <p>You leave a note for a house-sitter who does not read full sentences. They skim for a few magic words: see "strenger" and they get strict, see "Nederlands" and they speak Dutch, see "max 80 woorden" and they keep it short. Everything else on the note is decoration to them.</p>
+        <p>That note is <code>instructions.md</code>, a plain <span class="term" data-definition="Markdown is a simple way to format plain text: # for headings, ** for bold, - for bullet lists. README files are usually Markdown.">Markdown</span> file. The house-sitter is <code>loadJudgeRule</code>.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">instructions.md</span>
+            <pre><code><span class="code-line"><span class="code-keyword">## Judge / reduce (mini-quest hook — edit this section)</span></span>
+<span class="code-line">You are the **rechter** (judge). Produce:</span>
+<span class="code-line">1. A short final answer (max 80 woorden, Nederlands tenzij de gebruiker Engels vraagt).</span>
+<span class="code-line">2. Per-member agreement scores from 0 to 1 (how well each member supports the final answer).</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">### Judge rule (edit for mini-quest)</span></span>
+<span class="code-line">Wees strenger bij vage claims. Prefer concrete statements. If members disagree, say so explicitly and lower agreement scores for vague answers.</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A heading marking the part you are allowed to edit.</p>
+              <p class="tl">Contains "rechter": the quest script checks this word exists.</p>
+              <p class="tl">"max 80 woorden" sets the word limit. "Nederlands" switches the answer to Dutch.</p>
+              <p class="tl">Describes the scores. Human-readable only; the code ignores it.</p>
+              <p class="tl"></p>
+              <p class="tl">The quest's target zone.</p>
+              <p class="tl">"strenger" (stricter) is the switch that turns on the harsh 0.35 vagueness penalty.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The house-sitter, in code</h2>
+        <p><code>loadJudgeRule</code> reads the whole note and returns three settings. Watch the <code>\b</code> markers: they mean "word boundary", so the word must stand on its own.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/council.ts</span>
+            <pre><code><span class="code-line"><span class="code-keyword">export function</span> <span class="code-function">loadJudgeRule</span>(instructions: <span class="code-keyword">string</span>): { <span class="code-property">strict</span>: <span class="code-keyword">boolean</span>; <span class="code-property">dutch</span>: <span class="code-keyword">boolean</span>; <span class="code-property">maxWords</span>: <span class="code-keyword">number</span> } {</span>
+<span class="code-line">  <span class="code-keyword">const</span> strict = <span class="code-string">/\bstrenger\b|\bbe strict\b|strict-vague/i</span>.<span class="code-function">test</span>(instructions);</span>
+<span class="code-line">  <span class="code-keyword">const</span> dutch = <span class="code-string">/nederlands/i</span>.<span class="code-function">test</span>(instructions);</span>
+<span class="code-line">  <span class="code-keyword">const</span> maxMatch = instructions.<span class="code-function">match</span>(<span class="code-string">/max\s*(\d+)\s*woord/i</span>);</span>
+<span class="code-line">  <span class="code-keyword">const</span> maxWords = maxMatch <span class="code-operator">?</span> <span class="code-function">Number</span>(maxMatch[<span class="code-number">1</span>]) <span class="code-operator">:</span> <span class="code-number">80</span>;</span>
+<span class="code-line">  <span class="code-keyword">return</span> { strict, dutch, maxWords };</span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Take the note's full text; return three settings: strict yes/no, Dutch yes/no, and a word limit.</p>
+              <p class="tl">Strict if the note contains the standalone word "strenger", the phrase "be strict", or "strict-vague". Capital letters do not matter.</p>
+              <p class="tl">Dutch if "nederlands" appears anywhere at all.</p>
+              <p class="tl">Look for "max", a number, then "woord". Remember the number.</p>
+              <p class="tl">Found one? Use it. Otherwise default to 80 words.</p>
+              <p class="tl">Hand the three settings back.</p>
+              <p class="tl">Done.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Prose as configuration</strong>
+            <p>The same file is a <span class="term" data-definition="A system prompt is the standing instructions given to an AI model before the conversation, setting its role and rules.">system prompt</span> for a real model (module 5) and a <span class="term" data-definition="Configuration is the set of settings that change how a program behaves without changing its code.">config</span> file for the fixture judge. That is elegant, but keyword matching is brittle: a rephrasing a human reads as identical can flip a setting in code. When you ask an AI to "read settings from a prompt file", ask it to list which exact words it matches.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Spot the edit that silently breaks strict mode</h2>
+        <p>Four learners each rewrote the judge rule line. Every one of them meant "be stricter". Click the edit that actually turns strict mode <em>off</em>.</p>
+        <div class="bug-challenge">
+          <h3>Which judge rule no longer triggers <code>strict: true</code>?</h3>
+          <div class="bug-code">
+            <div class="bug-line" data-line="1" data-hint="This one still matches. Look for a line where the magic word is glued to extra letters." onclick="checkBugLine(this, false)">
+              <span class="line-num">1</span>
+              <code>Wees strenger bij vage claims.</code>
+            </div>
+            <div class="bug-line" data-line="2" data-hint="This one still matches. Look for a line where the magic word is glued to extra letters." onclick="checkBugLine(this, false)">
+              <span class="line-num">2</span>
+              <code>Wees STRENGER bij vage claims en maximaal concreet.</code>
+            </div>
+            <div class="bug-line bug-target" data-line="3" data-explanation="The pattern wants &quot;be strict&quot; followed by a word boundary. In &quot;stricter&quot; the letters &quot;er&quot; follow straight after, so there is no boundary, the match fails, and the judge quietly goes mild. (Line 2 still works because the i flag ignores capitals.)" onclick="checkBugLine(this, true)">
+              <span class="line-num">3</span>
+              <code>Be stricter with vague claims.</code>
+            </div>
+            <div class="bug-line" data-line="4" data-hint="This one still matches. Look for a line where the magic word is glued to extra letters." onclick="checkBugLine(this, false)">
+              <span class="line-num">4</span>
+              <code>Be strict with vague claims.</code>
+            </div>
+          </div>
+          <div class="bug-feedback"></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The mini-quest loop</h2>
+        <p>The lab asks you to change <strong>only</strong> the judge rule and watch the numbers move. <code>src/quest-judge.ts</code> first checks you did not delete the judge section entirely.</p>
+
+        <div class="step-cards">
+          <div class="step-card"><div class="step-num">1</div><div class="step-body"><strong>Edit the judge rule</strong><p>In <code>instructions.md</code>, under "Judge rule (edit for mini-quest)".</p></div></div>
+          <div class="step-card"><div class="step-num">2</div><div class="step-body"><strong>Run <code>pnpm quest:judge</code></strong><p>Prints the notes label, the agreement scores and the answer for a remote-first startup question.</p></div></div>
+          <div class="step-card"><div class="step-num">3</div><div class="step-body"><strong>Run <code>pnpm test</code></strong><p>Confirms the council still behaves. Arcade checkpoint: <code>mini-quest-judge</code>.</p></div></div>
+        </div>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/quest-judge.ts</span>
+            <pre><code><span class="code-line"><span class="code-keyword">const</span> before = <span class="code-function">readFileSync</span>(instructionsPath, <span class="code-string">'utf8'</span>);</span>
+<span class="code-line"><span class="code-keyword">if</span> (<span class="code-operator">!</span><span class="code-string">/rechter|judge/i</span>.<span class="code-function">test</span>(before)) {</span>
+<span class="code-line">  console.<span class="code-function">error</span>(<span class="code-string">'Mini-quest incomplete: judge section missing in instructions.md'</span>);</span>
+<span class="code-line">  process.<span class="code-function">exit</span>(<span class="code-number">1</span>);</span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Read the instructions file as text.</p>
+              <p class="tl">If it mentions neither "rechter" nor "judge"...</p>
+              <p class="tl">...print an error explaining the judge section is gone...</p>
+              <p class="tl">...and stop with <span class="term" data-definition="An exit code is the number a program reports when it finishes. 0 means success; anything else means failure, which scripts and CI systems can detect.">exit code</span> 1, signalling failure.</p>
+              <p class="tl">Otherwise carry on and run the council.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">quest output: mild rule vs strict rule</span>
+            <pre><code><span class="code-line"><span class="code-comment"># "Wees mild; vague wording is fine."</span></span>
+<span class="code-line">judge notes: judge-rule:default</span>
+<span class="code-line">agreement: { alpha: <span class="code-number">0.85</span>, bravo: <span class="code-number">0.5</span>, charlie: <span class="code-number">0.85</span>, delta: <span class="code-number">0.85</span> }</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-comment"># "Wees strenger bij vage claims."</span></span>
+<span class="code-line">judge notes: judge-rule:strict-vague</span>
+<span class="code-line">agreement: { alpha: <span class="code-number">0.85</span>, bravo: <span class="code-number">0.3</span>, charlie: <span class="code-number">0.85</span>, delta: <span class="code-number">0.85</span> }</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">With a mild rule...</p>
+              <p class="tl">...the notes say the default rule ran...</p>
+              <p class="tl">...and Bravo only loses 0.15 for hedging.</p>
+              <p class="tl"></p>
+              <p class="tl">With the strict rule...</p>
+              <p class="tl">...the notes change...</p>
+              <p class="tl">...and Bravo drops to 0.3. Nobody else moves, because nobody else hedges.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module4">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Right. dutch is true whenever &quot;nederlands&quot; appears anywhere. Removing that phrase flips it to false and the answer starts with &quot;Summary:&quot;."
+               data-explanation-wrong="Look at how dutch is detected: a single word, anywhere in the file. Which edit removes it?">
+            <h3 class="quiz-question">After a learner's edit, the final answer suddenly starts with "Summary:" instead of "Samenvatting:". What did they most likely change?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>They removed "strenger" from the judge rule</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>They deleted the phrase containing "Nederlands"</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>They asked the question in English</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Exactly. The pattern needs &quot;max&quot;, a number and &quot;woord&quot;. &quot;max 15 woorden&quot; fits, and the answer is cut to 15 words with an ellipsis."
+               data-explanation-wrong="The word limit is read with the pattern max + number + woord. Only one option keeps that shape.">
+            <h3 class="quiz-question">You want the judge's answer cut to 15 words. Which edit to instructions.md actually works?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>"Keep it under fifteen words"</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>"Limit: 15 words"</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>"max 15 woorden"</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Yes. The matcher reads the whole file, not just the rule section. The word elsewhere keeps strict mode on, which is why the scores never move."
+               data-explanation-wrong="loadJudgeRule receives the entire file. Section headings mean nothing to a regex.">
+            <h3 class="quiz-question">A learner deletes "strenger" from the judge rule but adds a sentence elsewhere in the file: "De rechter is strenger dan vorig jaar." Scores do not change. Why?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The strict check scans the whole file, so "strenger" anywhere still counts</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The file is cached and needs a restart</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Strict mode is hardcoded on</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,178 @@
+<section class="module" id="module-3" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">The Judge's Scorecard</h1>
+      <p class="module-subtitle">How the reduce step picks a winner and turns words into numbers between 0 and 1</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Scored like figure skating</h2>
+        <p>A figure skating judge starts from a base value, adds bonuses for clean elements, subtracts deductions for falls, and the final mark can never drop below zero. This judge works exactly the same way, except its "elements" are words.</p>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-num">0.55</div><p>Everyone starts with the same base score</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">+0.2</div><p>Bonus for concrete words: feit, bron, concreet, stappen</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">−</div><p>Deduction for vague words: misschien, hangt, vague, vaag</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">+0.1</div><p>Bonus for sharing a long word with the final answer</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">0–1</div><p>Clamp into the 0 to 1 range and round</p></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The scoring function, line by line</h2>
+        <p>This is <code>scoreAgainstJudge</code> in <code>src/council.ts</code>. It uses <span class="term" data-definition="A regular expression (regex) is a tiny pattern language for finding text. /bron|feit/ means 'contains bron or feit'. Ask an AI for 'a regex that matches X' when you need text detection.">regular expressions</span> to spot words, and a <span class="term" data-definition="A boolean is a value that is only ever true or false, like a light switch.">boolean</span> called <code>strict</code> to decide how harsh the vagueness penalty is.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/council.ts</span>
+            <pre><code><span class="code-line"><span class="code-keyword">function</span> <span class="code-function">scoreAgainstJudge</span>(member: CouncilMemberOutput, judgeAnswer: <span class="code-keyword">string</span>, strict: <span class="code-keyword">boolean</span>): <span class="code-keyword">number</span> {</span>
+<span class="code-line">  <span class="code-keyword">const</span> text = member.answer.<span class="code-function">toLowerCase</span>();</span>
+<span class="code-line">  <span class="code-keyword">let</span> score = <span class="code-number">0.55</span>;</span>
+<span class="code-line">  <span class="code-keyword">if</span> (<span class="code-string">/feit|bron|concreet|stappen/</span>.<span class="code-function">test</span>(text)) score <span class="code-operator">+=</span> <span class="code-number">0.2</span>;</span>
+<span class="code-line">  <span class="code-keyword">if</span> (<span class="code-string">/misschien|hangt|vague|vaag/</span>.<span class="code-function">test</span>(text)) score <span class="code-operator">-=</span> strict <span class="code-operator">?</span> <span class="code-number">0.35</span> <span class="code-operator">:</span> <span class="code-number">0.15</span>;</span>
+<span class="code-line">  <span class="code-keyword">if</span> (judgeAnswer.<span class="code-function">toLowerCase</span>().<span class="code-function">split</span>(<span class="code-string">/\s+/</span>).<span class="code-function">some</span>((w) <span class="code-operator">=&gt;</span> w.length <span class="code-operator">&gt;</span> <span class="code-number">4</span> <span class="code-operator">&amp;&amp;</span> text.<span class="code-function">includes</span>(w))) score <span class="code-operator">+=</span> <span class="code-number">0.1</span>;</span>
+<span class="code-line">  <span class="code-keyword">return</span> Math.<span class="code-function">max</span>(<span class="code-number">0</span>, Math.<span class="code-function">min</span>(<span class="code-number">1</span>, <span class="code-function">Number</span>(score.<span class="code-function">toFixed</span>(<span class="code-number">2</span>))));</span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">To score one member, I need their answer, the judge's final answer, and whether strict mode is on.</p>
+              <p class="tl">Lowercase the member's answer so "Bron" and "bron" count the same.</p>
+              <p class="tl">Start at 0.55.</p>
+              <p class="tl">Mentions facts, sources, concreteness or steps? Add 0.2.</p>
+              <p class="tl">Uses hedging words? Subtract 0.35 when strict, only 0.15 when mild.</p>
+              <p class="tl">Chop the final answer into words. If any word longer than 4 letters also appears in this member's answer, add 0.1.</p>
+              <p class="tl">Round to two decimals and squeeze the result so it never goes below 0 or above 1.</p>
+              <p class="tl">Done.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Watch Bravo get scored</h2>
+        <p>Here is the scorecard travelling through each check for Bravo's hedging answer, with strict mode on.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-m3-base","label":"Bravo starts at 0.55, like everyone else"},
+          {"highlight":"flow-m3-facts","label":"No feit, bron, concreet or stappen in Bravo&apos;s answer: no bonus. Still 0.55","packet":true,"from":"m3-base","to":"m3-facts"},
+          {"highlight":"flow-m3-vague","label":"Found misschien and hangt. Strict rule: minus 0.35. Now 0.20","packet":true,"from":"m3-facts","to":"m3-vague"},
+          {"highlight":"flow-m3-overlap","label":"Bravo echoes the question, so words like paraplu also appear in the final answer: plus 0.1. Now 0.30","packet":true,"from":"m3-vague","to":"m3-overlap"},
+          {"highlight":"flow-m3-clamp","label":"0.30 is already between 0 and 1. Final score: 0.3 (it would be 0.5 with a mild rule)","packet":true,"from":"m3-overlap","to":"m3-clamp"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-m3-base"><div class="flow-actor-icon">🎯</div><span>Base</span></div>
+            <div class="flow-actor" id="flow-m3-facts"><div class="flow-actor-icon">📌</div><span>Concrete?</span></div>
+            <div class="flow-actor" id="flow-m3-vague"><div class="flow-actor-icon">🌫️</div><span>Vague?</span></div>
+            <div class="flow-actor" id="flow-m3-overlap"><div class="flow-actor-icon">🔗</div><span>Overlap?</span></div>
+            <div class="flow-actor" id="flow-m3-clamp"><div class="flow-actor-icon">📏</div><span>Clamp</span></div>
+          </div>
+          <div class="flow-packet"></div>
+          <div class="flow-step-label">Click "Next Step" to begin</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🔍</div>
+          <div class="callout-content">
+            <strong class="callout-title">A bonus everybody always gets</strong>
+            <p>Every fixture member repeats your question, and the final answer repeats it too. So the "+0.1 overlap" bonus fires for all four members on almost every question. A check that always passes measures nothing. Spotting this kind of thing is exactly how you catch an AI-written <span class="term" data-definition="A heuristic is a rule of thumb: a quick shortcut that is usually good enough, instead of an exact method.">heuristic</span> that looks clever but does not discriminate.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Picking the winning answer</h2>
+        <p>Before scoring anyone, <code>reduceCouncil</code> chooses which member's words become the final answer, then trims it to the word limit.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/council.ts</span>
+            <pre><code><span class="code-line">  <span class="code-keyword">const</span> rule = <span class="code-function">loadJudgeRule</span>(input.instructions);</span>
+<span class="code-line">  <span class="code-keyword">const</span> preferred = input.members.<span class="code-function">find</span>((m) <span class="code-operator">=&gt;</span> <span class="code-string">/concreet|stappen|bron/i</span>.<span class="code-function">test</span>(m.answer)) <span class="code-operator">||</span> input.members[<span class="code-number">0</span>];</span>
+<span class="code-line">  <span class="code-keyword">let</span> answer = rule.dutch</span>
+<span class="code-line">    <span class="code-operator">?</span> <span class="code-string">`Samenvatting: ${preferred.answer.replace(/^[A-Za-z]+:\s*/, '')}`</span></span>
+<span class="code-line">    <span class="code-operator">:</span> <span class="code-string">`Summary: ${preferred.answer.replace(/^[A-Za-z]+:\s*/, '')}`</span>;</span>
+<span class="code-line">  <span class="code-keyword">const</span> words = answer.<span class="code-function">split</span>(<span class="code-string">/\s+/</span>);</span>
+<span class="code-line">  <span class="code-keyword">if</span> (words.length <span class="code-operator">&gt;</span> rule.maxWords) {</span>
+<span class="code-line">    answer = words.<span class="code-function">slice</span>(<span class="code-number">0</span>, rule.maxWords).<span class="code-function">join</span>(<span class="code-string">' '</span>) <span class="code-operator">+</span> <span class="code-string">'…'</span>;</span>
+<span class="code-line">  }</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Read the judge's house rules (strict? Dutch? word limit?) from instructions.md. Module 4 covers how.</p>
+              <p class="tl">Walk the members in order and take the first one that sounds concrete. Nobody does? Fall back to the first member.</p>
+              <p class="tl">If the rules say Dutch...</p>
+              <p class="tl">...start with "Samenvatting:" and strip the "Charlie:" name tag off the front.</p>
+              <p class="tl">Otherwise start with "Summary:" instead.</p>
+              <p class="tl">Count the words.</p>
+              <p class="tl">Too many for the limit?</p>
+              <p class="tl">Keep only the allowed number and add an ellipsis.</p>
+              <p class="tl">End of the trimming.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module3">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Right. Alpha already passes the concrete check via &quot;feiten&quot;. It still loses the summary because the picker looks only for concreet, stappen or bron, and Charlie matches first."
+               data-explanation-wrong="Two different word lists are at play. The scoring list includes feit, but the picker in reduceCouncil only looks for concreet, stappen or bron.">
+            <h3 class="quiz-question">Alpha scores 0.85, tied with Charlie, yet the final answer is always built from Charlie's words. Why?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Ties are broken alphabetically from the end</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Picking the summary uses a different word list than scoring, and Alpha's answer is not on it</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Charlie answered faster</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Exactly. The overlap bonus fires for everyone because everyone echoes the question, so it adds the same 0.1 to all and never separates them. Removing it or changing what counts as overlap is the real fix."
+               data-explanation-wrong="Look at what every fixture answer has in common with the final answer: the pasted-in question. Which check does that make useless?">
+            <h3 class="quiz-question">A reviewer complains that agreement scores barely tell members apart. Which check would you ask your AI to rethink first?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The clamp to 0 to 1</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The 0.55 base score</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The shared-long-word overlap bonus</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Yes. 0.55 plus 0.2 is 0.75, the vague penalty does not apply, and the overlap bonus brings it to 0.85."
+               data-explanation-wrong="Walk the scorecard: base 0.55, concrete bonus +0.2 for &quot;bron&quot;, no vague words, overlap +0.1.">
+            <h3 class="quiz-question">A new member answers "Echo: [your question] — check eerst de bron." What score will it get, strict mode on?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>0.85</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>0.55</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>0.30</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

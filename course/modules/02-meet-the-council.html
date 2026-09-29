@@ -1,0 +1,265 @@
+<section class="module" id="module-2" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Meet the Council</h1>
+      <p class="module-subtitle">Who sits at the table, what each one says, and the form they all have to fill in</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The cast</h2>
+        <p>Four members and one judge. Each member has a personality baked into its answer, and those personalities are chosen on purpose so the judge has something to disagree about.</p>
+        <div class="icon-rows">
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-1)">A</div>
+            <div><strong>Alpha — the fact checker</strong><p>"focus op feiten" (focus on facts)</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-2)">B</div>
+            <div><strong>Bravo — the fence-sitter</strong><p>"misschien, hangt van context af" (maybe, depends on context)</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-3)">C</div>
+            <div><strong>Charlie — the planner</strong><p>"concrete stappen: 1) check bron 2) beslis" (concrete steps: check source, decide)</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-5)">D</div>
+            <div><strong>Delta — the seconder</strong><p>"eens met Charlie over broncheck" (agrees with Charlie on checking sources)</p></div>
+          </div>
+          <div class="icon-row">
+            <div class="icon-circle" style="background: var(--color-actor-4)">⚖️</div>
+            <div><strong>The judge (rechter)</strong><p>Picks the most concrete answer, summarizes it and scores everyone</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Listen in on the deliberation</h2>
+        <p>Here is the umbrella question played out as a group chat. Every member line is the exact text the code produces; the judge's lines narrate what <code>reduceCouncil</code> decides.</p>
+
+        <div class="chat-window" id="chat-council">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="user" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-text-secondary)">?</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-text-secondary)">You</span>
+                <p>Moeten we een paraplu meenemen in Amsterdam?</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="alpha" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">A</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Alpha</span>
+                <p>Alpha: Moeten we een paraplu meenemen in Amsterdam? — focus op feiten.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="bravo" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">B</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Bravo</span>
+                <p>Bravo: Moeten we een paraplu meenemen in Amsterdam? — misschien, hangt van context af.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="charlie" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">C</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">Charlie</span>
+                <p>Charlie: Moeten we een paraplu meenemen in Amsterdam? — concrete stappen: 1) check bron 2) beslis.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="delta" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">D</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">Delta</span>
+                <p>Delta: Moeten we een paraplu meenemen in Amsterdam? — eens met Charlie over broncheck.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="judge" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">J</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">Judge</span>
+                <p>First member mentioning "concreet", "stappen" or "bron" wins the summary. That's Charlie. Writing it up in Dutch: "Samenvatting: ..."</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="6" data-sender="bravo" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">B</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Bravo</span>
+                <p>Hey, "it depends" is a perfectly honest answer!</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="7" data-sender="judge" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">J</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">Judge</span>
+                <p>My rule says "Wees strenger bij vage claims." Alpha, Charlie, Delta: 0.85. Bravo: 0.3. Notes: judge-rule:strict-vague.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing" style="display:none">
+            <div class="chat-avatar" id="chat-council-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Next Message</button>
+            <button class="btn chat-all-btn">Play All</button>
+            <button class="btn chat-reset-btn">Replay</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🎭</div>
+          <div class="callout-content">
+            <strong class="callout-title">These members are actors reading a script</strong>
+            <p>No AI is called here. The answers are <span class="term" data-definition="A fixture is canned, predictable data used in place of the real thing, usually for tests or demos. Same input, same output, every time, and no cost.">fixtures</span>: fixed sentences with your question pasted in. That keeps the lab free and the tests predictable.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Where the script lives</h2>
+        <p>The whole council is one <span class="term" data-definition="A function is a named, reusable block of code. You give it inputs, it does its job and hands back an output, like a vending machine.">function</span> in <code>src/council.ts</code> that returns a list of four answers.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/council.ts</span>
+            <pre><code><span class="code-line"><span class="code-comment">/** Fixture member answers — no live multi-model spend. */</span></span>
+<span class="code-line"><span class="code-keyword">export function</span> <span class="code-function">fanOutFixture</span>(prompt: <span class="code-keyword">string</span>): CouncilMemberOutput[] {</span>
+<span class="code-line">  <span class="code-keyword">const</span> base = prompt.<span class="code-function">trim</span>() <span class="code-operator">||</span> <span class="code-string">'Geen prompt'</span>;</span>
+<span class="code-line">  <span class="code-keyword">return</span> [</span>
+<span class="code-line">    { <span class="code-property">id</span>: <span class="code-string">'alpha'</span>, <span class="code-property">answer</span>: <span class="code-string">`Alpha: ${base} — focus op feiten.`</span> },</span>
+<span class="code-line">    { <span class="code-property">id</span>: <span class="code-string">'bravo'</span>, <span class="code-property">answer</span>: <span class="code-string">`Bravo: ${base} — misschien, hangt van context af.`</span> },</span>
+<span class="code-line">    { <span class="code-property">id</span>: <span class="code-string">'charlie'</span>, <span class="code-property">answer</span>: <span class="code-string">`Charlie: ${base} — concrete stappen: 1) check bron 2) beslis.`</span> },</span>
+<span class="code-line">    { <span class="code-property">id</span>: <span class="code-string">'delta'</span>, <span class="code-property">answer</span>: <span class="code-string">`Delta: ${base} — eens met Charlie over broncheck.`</span> },</span>
+<span class="code-line">  ];</span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A note to humans: these answers are fake on purpose, so no money is spent on AI calls.</p>
+              <p class="tl">Define "fanOutFixture": it takes the question as text and promises to return a list of member answers.</p>
+              <p class="tl">Trim stray spaces off the question. If nothing is left, use "Geen prompt" (no prompt).</p>
+              <p class="tl">Hand back a list of four answers:</p>
+              <p class="tl">Alpha pastes in the question and adds "focus on facts."</p>
+              <p class="tl">Bravo pastes it in and hedges.</p>
+              <p class="tl">Charlie pastes it in and gives concrete steps.</p>
+              <p class="tl">Delta pastes it in and backs Charlie.</p>
+              <p class="tl">End of the list.</p>
+              <p class="tl">End of the function.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The ballot form every member fills in</h2>
+        <p>Think of an election ballot: every voter gets the same printed form with fixed boxes, so counting is easy. <code>src/schemas.ts</code> is that printed form. It uses <span class="term" data-definition="TypeScript is JavaScript with labels (types) that say what shape each piece of data must have. Mistakes get flagged before the program even runs.">TypeScript</span> <span class="term" data-definition="A type describes the shape data must have, such as 'text', 'a number', or 'an object with an id and an answer'. Ask AI to 'add a type' when you want the editor to catch shape mistakes.">types</span> to describe the exact shape of every answer and every verdict.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/schemas.ts</span>
+            <pre><code><span class="code-line"><span class="code-keyword">export type</span> CouncilMemberId = <span class="code-string">'alpha'</span> <span class="code-operator">|</span> <span class="code-string">'bravo'</span> <span class="code-operator">|</span> <span class="code-string">'charlie'</span> <span class="code-operator">|</span> <span class="code-string">'delta'</span>;</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">export type</span> CouncilMemberOutput = {</span>
+<span class="code-line">  <span class="code-property">id</span>: CouncilMemberId;</span>
+<span class="code-line">  <span class="code-property">answer</span>: <span class="code-keyword">string</span>;</span>
+<span class="code-line">};</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">export type</span> JudgeResult = {</span>
+<span class="code-line">  <span class="code-property">answer</span>: <span class="code-keyword">string</span>;</span>
+<span class="code-line">  <span class="code-property">agreement</span>: Record&lt;CouncilMemberId, <span class="code-keyword">number</span>&gt;;</span>
+<span class="code-line">  <span class="code-property">notes</span>: <span class="code-keyword">string</span>;</span>
+<span class="code-line">};</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="code-keyword">export const</span> MEMBER_IDS: CouncilMemberId[] = [<span class="code-string">'alpha'</span>, <span class="code-string">'bravo'</span>, <span class="code-string">'charlie'</span>, <span class="code-string">'delta'</span>];</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">A member name can only be one of these four words. "echo" would be rejected.</p>
+              <p class="tl"></p>
+              <p class="tl">A member's ballot has exactly two boxes:</p>
+              <p class="tl">who they are,</p>
+              <p class="tl">and what they said.</p>
+              <p class="tl"></p>
+              <p class="tl"></p>
+              <p class="tl">The judge's verdict has three boxes:</p>
+              <p class="tl">the final answer,</p>
+              <p class="tl">a score for every one of the four members (a lookup table: name to number),</p>
+              <p class="tl">and a short note about which rule was used.</p>
+              <p class="tl"></p>
+              <p class="tl"></p>
+              <p class="tl">The official roll call, in order. The judge walks this list when scoring.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Structured output beats free text</strong>
+            <p>Because the verdict is a fixed <span class="term" data-definition="A schema is a formal description of what data must look like: which fields exist and what kind of value each holds.">schema</span>, other code (tests, dashboards, a grading bot) can read <code>agreement.bravo</code> without guessing. When you ask an AI for results, asking for "JSON matching this schema" is what makes them usable by software.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module2">
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Right. The member name is a closed list in schemas.ts, the roll call MEMBER_IDS drives scoring, and fanOutFixture must actually produce the new answer. Miss one and TypeScript or the judge will complain."
+               data-explanation-wrong="Adding a member is not just adding a sentence. The allowed names and the roll call the judge walks both live in schemas.ts, and they must match the answers fanOutFixture returns.">
+            <h3 class="quiz-question">You want a fifth member, "echo", who always plays devil's advocate. What should you tell your AI assistant to change?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Only add a new line in fanOutFixture</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Only edit instructions.md to mention echo</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Add "echo" to CouncilMemberId and MEMBER_IDS in schemas.ts, and give echo an answer in fanOutFixture</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Yes. The members are fixtures, so their words never change except for your pasted-in question. Only the judge's rules can change the outcome in this lab."
+               data-explanation-wrong="Remember: the members are scripted fixtures, not live AI. Nothing about them varies from run to run except the question pasted into the template.">
+            <h3 class="quiz-question">You ask ten different questions and Bravo is always the lowest-scoring member. Why?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Bravo's answer is a fixed template that always hedges, whatever the question</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Bravo is a weaker AI model than the others</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Bravo answers last, so it is out of time</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Exactly. A fixed schema is a contract: the grader can rely on agreement.alpha existing and being a number."
+               data-explanation-wrong="Think about who else reads the verdict. Free prose is great for humans but software needs predictable fields.">
+            <h3 class="quiz-question">A teammate suggests the judge should just return a friendly paragraph instead of the JudgeResult shape. What do you lose?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Nothing, a paragraph contains the same information</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Tests and other programs can no longer reliably read each member's score</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The members stop answering</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>

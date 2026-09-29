@@ -1,0 +1,229 @@
+<section class="module" id="module-1" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">Ask the Council a Question</h1>
+      <p class="module-subtitle">What this project does, and what happens between typing a question and getting a verdict back</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One question, four opinions, one verdict</h2>
+        <p>This project is a small <span class="term" data-definition="A starter is a deliberately tiny project you copy and build on. It shows the shape of a solution without all the production extras.">starter</span> for an idea called an <strong>LLM council</strong>: instead of asking one <span class="term" data-definition="LLM stands for Large Language Model, the kind of AI behind Claude and ChatGPT. It reads text and predicts good text to write back.">LLM</span> once, you ask several "members" the same thing, then let a <strong>judge</strong> boil their answers down into one final answer plus a score for how much each member agreed.</p>
+        <p>It was built for AetherLink Academy's Agent Arcade as a lab exercise, using the <span class="term" data-definition="The Claude Agent SDK is Anthropic's toolkit for building AI agents in code. SDK means Software Development Kit: a ready-made library you import instead of writing everything yourself.">Claude Agent SDK</span>.</p>
+
+        <div class="step-cards">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>You ask a question</strong>
+              <p>"Moeten we een paraplu meenemen in Amsterdam?" (Should we bring an umbrella in Amsterdam?)</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Fan-out: four members answer</strong>
+              <p>Alpha, Bravo, Charlie and Delta each give an opinion.</p>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Reduce: the judge decides</strong>
+              <p>One short summary, plus an agreement score from 0 to 1 for each member.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The advice column</h2>
+        <p>Picture a newspaper advice column. A reader mails in a letter. The desk photocopies it for four columnists, each writes a reply, and the editor prints one answer, noting which columnists she sided with.</p>
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">✉️</div>
+            <h4 class="pattern-title">The letter</h4>
+            <p class="pattern-desc">Your prompt, typed on the command line.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🗂️</div>
+            <h4 class="pattern-title">The mail desk</h4>
+            <p class="pattern-desc"><code>src/agent.ts</code> receives it and routes it onward.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">✍️</div>
+            <h4 class="pattern-title">The columnists</h4>
+            <p class="pattern-desc">Four council members inside <code>src/council.ts</code>.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">⚖️</div>
+            <h4 class="pattern-title">The editor</h4>
+            <p class="pattern-desc">The judge, whose house rules live in <code>instructions.md</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Follow the letter</h2>
+        <p>You run <code>pnpm start</code> in a <span class="term" data-definition="The terminal is the text window where you type commands to your computer instead of clicking buttons.">terminal</span>. Click through to watch your question travel.</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-m1-you","label":"You run pnpm start with a question (or none, and a default umbrella question is used)"},
+          {"highlight":"flow-m1-agent","label":"agent.ts notices it is the file being run directly and grabs your words from the command line","packet":true,"from":"m1-you","to":"m1-agent"},
+          {"highlight":"flow-m1-council","label":"runCouncil hands the prompt plus the path to instructions.md over to council.ts","packet":true,"from":"m1-agent","to":"m1-council"},
+          {"highlight":"flow-m1-council","label":"fanOutFixture produces four member answers (alpha, bravo, charlie, delta)"},
+          {"highlight":"flow-m1-rules","label":"The judge reads instructions.md to learn how strict to be","packet":true,"from":"m1-council","to":"m1-rules"},
+          {"highlight":"flow-m1-council","label":"reduceCouncil writes the summary and scores each member","packet":true,"from":"m1-rules","to":"m1-council"},
+          {"highlight":"flow-m1-you","label":"agent.ts prints everything as JSON in your terminal","packet":true,"from":"m1-council","to":"m1-you"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-m1-you">
+              <div class="flow-actor-icon">🧑</div>
+              <span>You (terminal)</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-agent">
+              <div class="flow-actor-icon">🗂️</div>
+              <span>agent.ts</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-council">
+              <div class="flow-actor-icon">✍️</div>
+              <span>council.ts</span>
+            </div>
+            <div class="flow-actor" id="flow-m1-rules">
+              <div class="flow-actor-icon">📜</div>
+              <span>instructions.md</span>
+            </div>
+          </div>
+          <div class="flow-packet"></div>
+          <div class="flow-step-label">Click "Next Step" to begin</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The front door, in code</h2>
+        <p>This is the bottom of <code>src/agent.ts</code>. It only runs when you start this file directly, which makes it the program's <span class="term" data-definition="The entry point is where a program starts running, like the front door of a building. Tell an AI 'change the entry point' when you want to alter what happens at startup.">entry point</span>.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">src/agent.ts</span>
+            <pre><code><span class="code-line"><span class="code-keyword">const</span> isMain = process.argv[<span class="code-number">1</span>] <span class="code-operator">&amp;&amp;</span> <span class="code-function">fileURLToPath</span>(<span class="code-keyword">import</span>.meta.url) <span class="code-operator">===</span> process.argv[<span class="code-number">1</span>];</span>
+<span class="code-line"><span class="code-keyword">if</span> (isMain) {</span>
+<span class="code-line">  <span class="code-keyword">const</span> prompt = process.argv.<span class="code-function">slice</span>(<span class="code-number">2</span>).<span class="code-function">join</span>(<span class="code-string">' '</span>) <span class="code-operator">||</span> <span class="code-string">'Moeten we een paraplu meenemen in Amsterdam?'</span>;</span>
+<span class="code-line">  <span class="code-keyword">const</span> result = <span class="code-function">runCouncil</span>(prompt);</span>
+<span class="code-line">  console.<span class="code-function">log</span>(JSON.<span class="code-function">stringify</span>(result, <span class="code-keyword">null</span>, <span class="code-number">2</span>));</span>
+<span class="code-line">  <span class="code-keyword">if</span> (<span class="code-operator">!</span>process.env.ANTHROPIC_API_KEY) {</span>
+<span class="code-line">    console.<span class="code-function">log</span>(<span class="code-string">'\n(Tip) Set ANTHROPIC_API_KEY to exercise the live Claude Agent SDK path.'</span>);</span>
+<span class="code-line">  }</span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Am I the file you actually launched, or did another file just borrow my functions? Only continue if I was launched.</p>
+              <p class="tl">If so, run the block below.</p>
+              <p class="tl">Glue together every word you typed after the command into one question. Typed nothing? Use the umbrella question.</p>
+              <p class="tl">Ask the council.</p>
+              <p class="tl">Print the whole result as neatly indented <span class="term" data-definition="JSON is a plain-text format for structured data: curly braces, labels in quotes, and values. Almost every program can read and write it.">JSON</span>.</p>
+              <p class="tl">If no <span class="term" data-definition="An API key is a secret password that proves to a paid service (here, Anthropic) who you are, so it can bill you.">API key</span> is set in the <span class="term" data-definition="Environment variables are settings stored outside the code, in the terminal session. Secrets like API keys live here so they never end up in the code itself.">environment</span>...</p>
+              <p class="tl">...print a friendly hint about the optional live path.</p>
+              <p class="tl">End of the check.</p>
+              <p class="tl">End of the startup block.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Fan-out, then reduce</strong>
+            <p>Sending one job to many workers and then combining their results is one of computing's oldest patterns. Engineers call it <strong>fan-out / reduce</strong> (you may hear "map-reduce"). Knowing the name lets you ask an AI for it directly: "fan this out to three reviewers and reduce to one verdict."</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What comes back</h2>
+        <p>This is real output from running the council on the umbrella question. The members echo your question, and the judge's scores sit under <code>agreement</code>.</p>
+        <div class="translation-block">
+          <div class="translation-code">
+            <span class="translation-label">terminal output (abridged view of judge)</span>
+            <pre><code><span class="code-line"><span class="code-property">"judge"</span>: {</span>
+<span class="code-line">  <span class="code-property">"answer"</span>: <span class="code-string">"Samenvatting: Moeten we een paraplu meenemen in Amsterdam? — concrete stappen: 1) check bron 2) beslis."</span>,</span>
+<span class="code-line">  <span class="code-property">"agreement"</span>: {</span>
+<span class="code-line">    <span class="code-property">"alpha"</span>: <span class="code-number">0.85</span>, <span class="code-property">"bravo"</span>: <span class="code-number">0.3</span>, <span class="code-property">"charlie"</span>: <span class="code-number">0.85</span>, <span class="code-property">"delta"</span>: <span class="code-number">0.85</span></span>
+<span class="code-line">  },</span>
+<span class="code-line">  <span class="code-property">"notes"</span>: <span class="code-string">"judge-rule:strict-vague"</span></span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Here is the judge's verdict.</p>
+              <p class="tl">The final answer, in Dutch, built from Charlie's concrete step-by-step reply.</p>
+              <p class="tl">How much each member supports that answer:</p>
+              <p class="tl">Everyone agrees strongly except Bravo, whose "maybe, it depends" got penalized.</p>
+              <p class="tl"></p>
+              <p class="tl">A label saying the strict "punish vague claims" rule was active.</p>
+              <p class="tl"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module1">
+          <div class="quiz-question-block"
+               data-correct="b"
+               data-explanation-right="Right. The prompt comes from the words after the command. With none, agent.ts falls back to the built-in umbrella question, so the output looks familiar."
+               data-explanation-wrong="Look at the line with <code>||</code>: when you type nothing, the code quietly swaps in the umbrella question. Nothing crashes and nothing waits.">
+            <h3 class="quiz-question">A classmate runs <code>pnpm start</code> without typing any question and is surprised the council talks about umbrellas. What happened?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The council remembered their previous question</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No words were given, so agent.ts used its default question</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The judge rewrote the question to something it prefers</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="c"
+               data-explanation-right="Yes. Fan-out/reduce fits whenever you want several independent takes and then one combined decision, like getting three code reviews and merging the verdict."
+               data-explanation-wrong="Think about the shape: several independent opinions, then one combined decision. Only one option has that shape.">
+            <h3 class="quiz-question">You want an AI feature that gets three separate reviews of a contract and then produces one recommendation. Which pattern from this project would you ask your AI assistant for?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A single prompt that asks for three reviews at once</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>A retry loop that asks the same model until it agrees with itself</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Fan-out to three reviewers, then a reduce step that judges and scores them</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="a"
+               data-explanation-right="Exactly. The prompt enters through agent.ts, but the judging logic and its scores are produced in council.ts, so that is where a wrong score comes from."
+               data-explanation-wrong="agent.ts only receives the question and prints the result. The scores are calculated elsewhere; follow the flow animation again.">
+            <h3 class="quiz-question">The printed agreement scores look wrong. Where should you point your AI assistant first?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>council.ts, where the judge calculates the scores</span></button>
+              <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The startup block in agent.ts that prints the JSON</span></button>
+              <button class="quiz-option" data-value="c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>package.json</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
