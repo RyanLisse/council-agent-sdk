@@ -20,7 +20,6 @@ npm install
 Expected output includes:
 
 ```text
-added 109 packages, and audited 110 packages in 3s
 found 0 vulnerabilities
 ```
 
