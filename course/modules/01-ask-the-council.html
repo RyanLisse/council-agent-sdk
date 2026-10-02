@@ -67,10 +67,10 @@
 
       <section class="screen animate-in">
         <h2 class="screen-heading">Follow the letter</h2>
-        <p>You run <code>pnpm start</code> in a <span class="term" data-definition="The terminal is the text window where you type commands to your computer instead of clicking buttons.">terminal</span>. Click through to watch your question travel.</p>
+        <p>You run <code>npm start</code> in a <span class="term" data-definition="The terminal is the text window where you type commands to your computer instead of clicking buttons.">terminal</span>. Click through to watch your question travel.</p>
 
         <div class="flow-animation" data-steps='[
-          {"highlight":"flow-m1-you","label":"You run pnpm start with a question (or none, and a default umbrella question is used)"},
+          {"highlight":"flow-m1-you","label":"You run npm start with a question (or none, and a default umbrella question is used)"},
           {"highlight":"flow-m1-agent","label":"agent.ts notices it is the file being run directly and grabs your words from the command line","packet":true,"from":"m1-you","to":"m1-agent"},
           {"highlight":"flow-m1-council","label":"runCouncil hands the prompt plus the path to instructions.md over to council.ts","packet":true,"from":"m1-agent","to":"m1-council"},
           {"highlight":"flow-m1-council","label":"fanOutFixture produces four member answers (alpha, bravo, charlie, delta)"},
@@ -113,12 +113,15 @@
         <div class="translation-block animate-in">
           <div class="translation-code">
             <span class="translation-label">src/agent.ts</span>
-            <pre><code><span class="code-line"><span class="code-keyword">const</span> isMain = process.argv[<span class="code-number">1</span>] <span class="code-operator">&amp;&amp;</span> <span class="code-function">fileURLToPath</span>(<span class="code-keyword">import</span>.meta.url) <span class="code-operator">===</span> process.argv[<span class="code-number">1</span>];</span>
+            <pre><code><span class="code-line"><span class="code-keyword">const</span> isMain = <span class="code-function">isMainModule</span>(<span class="code-keyword">import</span>.meta.url, process.argv[<span class="code-number">1</span>]);</span>
 <span class="code-line"><span class="code-keyword">if</span> (isMain) {</span>
 <span class="code-line">  <span class="code-keyword">const</span> prompt = process.argv.<span class="code-function">slice</span>(<span class="code-number">2</span>).<span class="code-function">join</span>(<span class="code-string">' '</span>) <span class="code-operator">||</span> <span class="code-string">'Moeten we een paraplu meenemen in Amsterdam?'</span>;</span>
-<span class="code-line">  <span class="code-keyword">const</span> result = <span class="code-function">runCouncil</span>(prompt);</span>
-<span class="code-line">  console.<span class="code-function">log</span>(JSON.<span class="code-function">stringify</span>(result, <span class="code-keyword">null</span>, <span class="code-number">2</span>));</span>
-<span class="code-line">  <span class="code-keyword">if</span> (<span class="code-operator">!</span>process.env.ANTHROPIC_API_KEY) {</span>
+<span class="code-line">  <span class="code-keyword">if</span> (process.env.ANTHROPIC_API_KEY) {</span>
+<span class="code-line">    <span class="code-keyword">const</span> messages = <span class="code-keyword">await</span> <span class="code-function">runCouncilAgentLive</span>(prompt);</span>
+<span class="code-line">    console.<span class="code-function">log</span>(JSON.<span class="code-function">stringify</span>(messages, <span class="code-keyword">null</span>, <span class="code-number">2</span>));</span>
+<span class="code-line">  } <span class="code-keyword">else</span> {</span>
+<span class="code-line">    <span class="code-keyword">const</span> result = <span class="code-function">runCouncil</span>(prompt);</span>
+<span class="code-line">    console.<span class="code-function">log</span>(JSON.<span class="code-function">stringify</span>(result, <span class="code-keyword">null</span>, <span class="code-number">2</span>));</span>
 <span class="code-line">    console.<span class="code-function">log</span>(<span class="code-string">'\n(Tip) Set ANTHROPIC_API_KEY to exercise the live Claude Agent SDK path.'</span>);</span>
 <span class="code-line">  }</span>
 <span class="code-line">}</span></code></pre>
@@ -129,11 +132,11 @@
               <p class="tl">Am I the file you actually launched, or did another file just borrow my functions? Only continue if I was launched.</p>
               <p class="tl">If so, run the block below.</p>
               <p class="tl">Glue together every word you typed after the command into one question. Typed nothing? Use the umbrella question.</p>
-              <p class="tl">Ask the council.</p>
-              <p class="tl">Print the whole result as neatly indented <span class="term" data-definition="JSON is a plain-text format for structured data: curly braces, labels in quotes, and values. Almost every program can read and write it.">JSON</span>.</p>
-              <p class="tl">If no <span class="term" data-definition="An API key is a secret password that proves to a paid service (here, Anthropic) who you are, so it can bill you.">API key</span> is set in the <span class="term" data-definition="Environment variables are settings stored outside the code, in the terminal session. Secrets like API keys live here so they never end up in the code itself.">environment</span>...</p>
-              <p class="tl">...print a friendly hint about the optional live path.</p>
-              <p class="tl">End of the check.</p>
+              <p class="tl">If the API key is set, run the live SDK path.</p>
+              <p class="tl">Print the live messages as neatly indented <span class="term" data-definition="JSON is a plain-text format for structured data: curly braces, labels in quotes, and values. Almost every program can read and write it.">JSON</span>.</p>
+              <p class="tl">Otherwise, use the fixture council.</p>
+              <p class="tl">Print the fixture result as JSON.</p>
+              <p class="tl">Print a hint about the live path.</p>
               <p class="tl">End of the startup block.</p>
             </div>
           </div>
@@ -184,7 +187,7 @@
                data-correct="b"
                data-explanation-right="Right. The prompt comes from the words after the command. With none, agent.ts falls back to the built-in umbrella question, so the output looks familiar."
                data-explanation-wrong="Look at the line with <code>||</code>: when you type nothing, the code quietly swaps in the umbrella question. Nothing crashes and nothing waits.">
-            <h3 class="quiz-question">A classmate runs <code>pnpm start</code> without typing any question and is surprised the council talks about umbrellas. What happened?</h3>
+            <h3 class="quiz-question">A classmate runs <code>npm start</code> without typing any question and is surprised the council talks about umbrellas. What happened?</h3>
             <div class="quiz-options">
               <button class="quiz-option" data-value="a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The council remembered their previous question</span></button>
               <button class="quiz-option" data-value="b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>No words were given, so agent.ts used its default question</span></button>

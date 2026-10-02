@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fanOutFixture, loadJudgeRule, reduceCouncil } from '../src/council.ts';
@@ -34,23 +34,18 @@ test('instructions.md is the editable judge quest hook', () => {
 });
 
 test('judge instruction delta changes reduce notes (mini-quest parity)', () => {
-  const original = readFileSync(instructionsFile, 'utf8');
-  try {
-    const loose = original.replace(/Wees strenger bij vage claims\./i, 'Wees mild; vague wording is fine.');
-    writeFileSync(instructionsFile, loose);
-    const a = loadJudgeRule(original);
-    const b = loadJudgeRule(loose);
-    assert.equal(a.strict, true);
-    assert.equal(b.strict, false);
-    const members = fanOutFixture('Vague topic');
-    const strictJudge = reduceCouncil({ prompt: 'x', members, instructions: original });
-    const mildJudge = reduceCouncil({ prompt: 'x', members, instructions: loose });
-    assert.equal(strictJudge.notes, 'judge-rule:strict-vague');
-    assert.equal(mildJudge.notes, 'judge-rule:default');
-    assert.ok(strictJudge.agreement.bravo <= mildJudge.agreement.bravo);
-  } finally {
-    writeFileSync(instructionsFile, original);
-  }
+  const strictRule = 'Wees strenger bij vage claims.';
+  const mildRule = 'Wees mild; vague wording is fine.';
+  const a = loadJudgeRule(strictRule);
+  const b = loadJudgeRule(mildRule);
+  assert.equal(a.strict, true);
+  assert.equal(b.strict, false);
+  const members = fanOutFixture('Vague topic');
+  const strictJudge = reduceCouncil({ prompt: 'x', members, instructions: strictRule });
+  const mildJudge = reduceCouncil({ prompt: 'x', members, instructions: mildRule });
+  assert.equal(strictJudge.notes, 'judge-rule:strict-vague');
+  assert.equal(mildJudge.notes, 'judge-rule:default');
+  assert.ok(strictJudge.agreement.bravo <= mildJudge.agreement.bravo);
 });
 
 test('runCouncil smoke', () => {

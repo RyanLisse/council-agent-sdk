@@ -3,20 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Thin Claude Agent SDK starter \u2014 LLM council fan-out + judge reduce (AetherLink Arcade / AET-63)",
+  "description": "Claude Agent SDK example for fixture-backed answers and a judge rule quest",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node --import tsx src/agent.ts",
     "dev": "node --import tsx src/agent.ts",
-    "test": "node --import tsx --test tests/*.test.ts",
-    "quest:judge": "node --import tsx src/quest-judge.ts"
+    "test": "node --import tsx --test \"tests/*.test.ts\"",
+    "quest:judge": "node --import tsx src/quest-judge.ts",
+    "course:build": "node course/build.mjs",
+    "course:check": "node course/build.mjs --check"
   },
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.3.278",
-    "zod": "^3.25.76"
+    "@anthropic-ai/claude-agent-sdk": "0.3.278",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
