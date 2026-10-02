@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { query } from '@anthropic-ai/claude-agent-sdk';
 import { runCouncilFixture } from './council.ts';
+import { isMainModule } from './is-main.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const instructionsPath = join(root, 'instructions.md');
@@ -17,7 +18,7 @@ export function runCouncil(prompt: string) {
 /** Optional live SDK path — single model asking to apply judge instructions (env key required). */
 export async function runCouncilAgentLive(prompt: string) {
   if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error('Set ANTHROPIC_API_KEY in the environment (see .env.example). No secrets in git.');
+    throw new Error('Set ANTHROPIC_API_KEY in the environment. No secrets in git.');
   }
   const instructions = loadInstructions();
   const messages: unknown[] = [];
@@ -33,12 +34,14 @@ export async function runCouncilAgentLive(prompt: string) {
   return messages;
 }
 
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
-if (isMain) {
+if (isMainModule(import.meta.url, process.argv[1])) {
   const prompt = process.argv.slice(2).join(' ') || 'Moeten we een paraplu meenemen in Amsterdam?';
-  const result = runCouncil(prompt);
-  console.log(JSON.stringify(result, null, 2));
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (process.env.ANTHROPIC_API_KEY) {
+    const messages = await runCouncilAgentLive(prompt);
+    console.log(JSON.stringify(messages, null, 2));
+  } else {
+    const result = runCouncil(prompt);
+    console.log(JSON.stringify(result, null, 2));
     console.log('\n(Tip) Set ANTHROPIC_API_KEY to exercise the live Claude Agent SDK path.');
   }
 }
